@@ -1,0 +1,87 @@
+<%- include('partials/header') %>
+
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200">
+        <div class="mb-8 border-b border-slate-100 pb-4">
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Merge PDFs
+            </h2>
+            <p class="text-slate-500 mt-1">Combine multiple PDF files into one document.</p>
+        </div>
+
+        <form action="/merge" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <!-- File Upload -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Upload PDFs</label>
+                <div class="flex items-center justify-center w-full">
+                    <label for="pdf-upload"
+                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-3 text-slate-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                                </path>
+                            </svg>
+                            <p class="mb-2 text-sm text-slate-500"><span class="font-semibold">Click to upload</span> or
+                                drag and drop</p>
+                            <p class="text-xs text-slate-500">Multiple PDFs (MAX. 50MB Each)</p>
+                        </div>
+                        <input id="pdf-upload" name="pdfs" type="file" accept="application/pdf" multiple class="hidden"
+                            required />
+                    </label>
+                </div>
+                <div id="file-list" class="mt-3 space-y-2 text-sm text-slate-600"></div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit"
+                class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+                Merge PDFs
+            </button>
+        </form>
+
+        <!-- Error Message -->
+        <div id="error-message"
+            class="hidden mt-6 p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm text-center"></div>
+
+        <!-- Result / Download Button -->
+        <div id="result-container" class="hidden mt-8 text-center animate-fade-in">
+            <div class="p-6 bg-green-50 border border-green-200 rounded-xl">
+                <h3 class="text-lg font-semibold text-green-800 mb-2">Success!</h3>
+                <p class="text-green-600 text-sm mb-4">Your PDFs have been merged successfully.</p>
+                <a id="download-btn" href="#"
+                    class="inline-flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Download Merged PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('pdf-upload');
+        const fileList = document.getElementById('file-list');
+        const form = document.querySelector('form');
+
+        fileInput.addEventListener('change', (e) => {
+            fileList.innerHTML = '';
+            if (e.target.files.length > 0) {
+                Array.from(e.target.files).forEach(file => {
+                    const div = document.createElement('div');
+                    div.className = "flex items-center gap-2 bg-slate-50 p-2 rounded border border-slate-200";
+                    div.innerHTML = `<svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg> <span>${file.name}</span>`;
+                    fileList.appendChild(div);
+                });
+            }
+        });
+
+        handleFormSubmit(form, 'result-container', 'download-btn', 'error-message');
+    </script>
+
+    <%- include('partials/footer') %>

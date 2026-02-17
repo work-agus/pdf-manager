@@ -1,0 +1,5 @@
+# Nixpacks configuration for Railway
+# Ensures poppler_utils (containing pdftoppm) is installed
+
+[phases.setup]
+nixPkgs = ['poppler_utils']

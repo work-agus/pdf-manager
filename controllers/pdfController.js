@@ -187,24 +187,12 @@ exports.processRearrange = async (req, res) => {
         const totalPages = pdfDoc.getPageCount();
 
         // Parse order string
-        const pagesToKeep = [];
+
+
         const parts = order.split(',').map(p => p.trim());
-
-        for (const part of parts) {
-            const pageNum = Number(part);
-            if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
-                pagesToKeep.add(pageNum - 1);
-            }
-        }
-
-        // Wait, Rearrange needs to allow duplicates? Usually yes.
-        // But the previous "Split" implementation used a Set to avoid duplicates.
-        // For rearrange, duplicates might be desired (e.g. duplicating a page).
-        // Let's use Array to allow specific order and duplicates.
-
         const pageIndices = parts
-            .map(p => parseInt(p.trim()) - 1)
-            .filter(idx => idx >= 0 && idx < totalPages);
+            .map(p => parseInt(p, 10) - 1)
+            .filter(idx => !isNaN(idx) && idx >= 0 && idx < totalPages);
 
         if (pageIndices.length === 0) {
             throw new Error("Invalid page order.");
